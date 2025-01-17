@@ -337,7 +337,7 @@ export default function NotificationsPage() {
                 <strong className="text-red-400 mx-4">جميع رموز التحقق:</strong>
                 <div className='grid grid-cols'>
                 {selectedNotification.allOtps.map((i,index)=>
-                <Badge>{i}</Badge>
+                <Badge key={index}>{i}</Badge>
                 )}
                 </div>
               </p>
